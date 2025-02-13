@@ -1,0 +1,20 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+        routes:
+          - id: user-service-route
+            uri: lb://user-service
+            predicates:
+                - Path=/api/v1/user/**
+          - id: booking-service-route
+            uri: lb://booking-service
+            predicates:
+              - Path=/api/v1/booking/**
+server:
+  port: 4000

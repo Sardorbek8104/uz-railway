@@ -1,0 +1,32 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+management:
+       tracing:
+          enabled: true
+          sampling:
+            probability: 1.0
+       zipkin:
+          tracing:
+            endpoint: http://zipkin-server:9411/api/v2/spans
+            export:
+              enabled: true
+spring:
+  application:
+    name: notification-service
+  kafka:
+    consumer:
+      group-id: group-id1
+  datasource:
+    url: jdbc:postgresql://postgres:5432/user_service_db
+    username: postgres
+    password: 0304
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8083

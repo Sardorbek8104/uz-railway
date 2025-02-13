@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.8
+    container_name: zookeeper
+    ports:
+      - "22181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: bitnami/kafka:3.5
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9093"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+
+  postgres-user-service:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 0304
+      POSTGRES_DB: user_service_db
+    ports:
+      - "5432:5432"
+
+  mongo-booking-service:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  eureka-server:
+    image: eureca-service
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    working_dir: /app
+    command: [ "java", "-jar", "eureka-server.jar" ]
+
+  api-gateway:
+    image: api-gateway-service
+    container_name: api-gateway-server
+    ports:
+      - "4000:4000"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - eureka-server
+    working_dir: /app
+    command: [ "java", "-jar", "api-gateway.jar" ]
+
+  user-service:
+    image: user-service
+    container_name: user-service-server
+    depends_on:
+      - postgres-user-service
+      - kafka
+      - eureka-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    working_dir: /app
+    command: [ "java", "-jar", "user-service.jar" ]
+
+  booking-service:
+    image: booking-service
+    container_name: booking-service-server
+    depends_on:
+      - mongo-booking-service
+      - kafka
+      - eureka-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    working_dir: /app
+    command: [ "java", "-jar", "booking-service.jar" ]
+
+  notification-service:
+    image: notification-service
+    container_name: notification-service-server
+    depends_on:
+      - postgres-user-service
+      - kafka
+      - eureka-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    working_dir: /app
+    command: [ "java", "-jar", "notification-service.jar" ]
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin-server
+    ports:
+      - "9411:9411"
