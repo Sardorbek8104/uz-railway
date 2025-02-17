@@ -1,6 +1,7 @@
 package uz.pdp.bookingservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import uz.pdp.bookingservice.entity.*;
 import uz.pdp.bookingservice.entity.enums.RouteState;
@@ -16,6 +17,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +115,7 @@ public class RouteService {
     }
 
 
+    @Cacheable(value = "routes", key = "#fromStation + '_' + #toStation + '_' + #date")
     public List<Route> getRoutes(String fromStation, String toStation, String date) {
         if (fromStation.equals(toStation)) {
             throw new IllegalStateException("origin and destination are same stations");
@@ -121,6 +124,6 @@ public class RouteService {
 
         return routes.stream()
                 .filter(RoutePredicate.routeFilter(fromStation, toStation, date))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

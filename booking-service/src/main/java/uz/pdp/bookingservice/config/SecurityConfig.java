@@ -20,7 +20,8 @@ import uz.pdp.bookingservice.controller.filter.JwtTokenValidationFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private static final String[] WHITELIST = {
-            "api/v1/route"
+            "api/v1/route",
+            "api/v1/booking/route-map/test"
     };
     private final JwtTokenValidationFilter jwtTokenValidationFilter;
 
@@ -28,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.csrf((AbstractHttpConfigurer::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, WHITELIST).permitAll()
+                        .requestMatchers(WHITELIST).permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session

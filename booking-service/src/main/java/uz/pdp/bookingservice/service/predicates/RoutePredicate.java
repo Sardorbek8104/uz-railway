@@ -61,6 +61,7 @@ public class RoutePredicate {
             Station station = route.getFirstStation();
             long time = 0L;
             double price = 0;
+            int max = 0;
 
             boolean firstStationFound = false;
             while (!station.getName().equals(toStation)) {
@@ -68,19 +69,20 @@ public class RoutePredicate {
 
                 if (firstStationFound) {
                     price += station.getPrice();
+                    max = Math.max(station.getPassengers(), max);
                 }
 
                 if (station.getName().equals(fromStation)) {
-                    context.setStartTime(DateConverter.toLocalDateTime(
-                            route.getStartTime(), time));
+                    context.setStartTime(DateConverter.plus(route.getStartTime(), time));
                     firstStationFound = true;
+                    max = station.getPassengers();
                 }
 
                 station = station.getNextStation();
             }
-            context.setEndTime(DateConverter.toLocalDateTime(
-                    route.getStartTime(), time + station.getArrivalTime()));
+            context.setEndTime(DateConverter.plus(route.getStartTime(), time + station.getArrivalTime()));
             context.setPrice(price + station.getPrice());
+            context.setBusySeats(max);
 
             route.setContext(context);
         }

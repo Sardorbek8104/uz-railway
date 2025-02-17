@@ -30,9 +30,9 @@ public class TicketConverter {
                 .toStationName(request.getToStationName())
                 .price(request.getPrice())
                 .createdDate(Instant.now())
+                .status(TicketStatus.CREATED)
                 .arrivalDate(DateConverter.toInstant(request.getArrivalDate()))
                 .leavingDate(DateConverter.toInstant(request.getLeavingDate()))
-                .status(TicketStatus.CREATED)
                 .build();
     }
 }

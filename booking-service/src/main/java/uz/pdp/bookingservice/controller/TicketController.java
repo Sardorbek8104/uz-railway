@@ -20,7 +20,7 @@ public class TicketController {
     @PostMapping
     public Ticket createTicket(
             @RequestBody TicketCreateRequest request
-            ) {
+            ) throws InterruptedException {
         Ticket entity = ticketConverter.toEntity(request);
         return ticketService.createTicket(entity);
     }

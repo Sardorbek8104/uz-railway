@@ -1,6 +1,5 @@
 package uz.pdp.bookingservice.controller;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +39,6 @@ public class RouteController {
     ) {
 
         List<Route> routes = routeService.getRoutes(fromStationName, toStationName, date);
-        return RouteConverter.fromEntity(routes, fromStationName, toStationName);
+        return RouteConverter.fromEntity(routes);
     }
 }

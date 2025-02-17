@@ -8,7 +8,6 @@ import uz.pdp.bookingservice.entity.Ticket;
 import uz.pdp.bookingservice.entity.enums.TicketStatus;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -19,12 +18,12 @@ public class TicketCreatedEvent {
     private int ownerId;
     private String fromStationName;
     private String toStationName;
-    private TicketStatus status;
-    private String routeId;
     private Double price;
     private Instant createdDate;
     private Instant leavingDate;
     private Instant arrivalDate;
+    private TicketStatus status;
+    private String routeId;
 
     public static TicketCreatedEvent of(Ticket ticket) {
         return TicketCreatedEvent.builder()
@@ -33,11 +32,11 @@ public class TicketCreatedEvent {
                 .fromStationName(ticket.getFromStationName())
                 .toStationName(ticket.getToStationName())
                 .price(ticket.getPrice())
-                .status(ticket.getStatus())
-                .routeId(ticket.getRoute().getId())
                 .createdDate(ticket.getCreatedDate())
                 .leavingDate(ticket.getLeavingDate())
                 .arrivalDate(ticket.getArrivalDate())
+                .routeId(ticket.getRoute().getId())
+                .status(ticket.getStatus())
                 .build();
     }
 }

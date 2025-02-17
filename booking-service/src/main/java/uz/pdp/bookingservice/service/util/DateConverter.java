@@ -30,7 +30,7 @@ public class DateConverter {
                 .toInstant();
     }
 
-    public static LocalDateTime toLocalDateTime(Instant instant, long time) {
+    public static LocalDateTime plus(Instant instant, long time) {
         instant = instant.plusMillis(time);
         return LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Tashkent"));
     }

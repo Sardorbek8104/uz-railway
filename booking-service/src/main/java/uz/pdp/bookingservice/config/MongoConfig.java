@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
@@ -22,13 +23,18 @@ public class MongoConfig {
 
         @Override
         public Optional<String> getCurrentAuditor() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+            SecurityContext context = SecurityContextHolder.getContext();
+            if (context == null) {
+                return Optional.empty();
+            }
+            Authentication authentication = context.getAuthentication();
             if (authentication == null || !authentication.isAuthenticated()) {
-                return Optional.of("system");
+                return Optional.empty();
             }
 
-            return Optional.ofNullable(authentication.getName());
+            return Optional.of(
+                    SecurityContextHolder.getContext().getAuthentication().getName()
+            );
         }
     }
 }
